@@ -103,16 +103,6 @@ handles.vid = vid;
 %Updates the imported video text:
 set(handles.import_text, 'String', strcat('Video =',{' '}, FileName));
 
-%Focus on the main video axes
-axes(handles.main_video)
-
-%Read the first frame
-frame = read(vid,1);
-
-%Display the video in the main view.
-image(frame);
-set(handles.result_table, 'Data', [1, 1, vid.CurrentTime]);
-
 %Changes the boolean so that other buttons can be used.
 handles.vidimported = 1;
 
@@ -140,7 +130,19 @@ if(handles.vidimported && ~handles.running)
     
     %Focus on the main video axes
     axes(handles.main_video)
+
+    %Read the first frame
+    frame = read(vid,1);
+
+    %Display the video in the main view.
+    image(frame);
     
+    %Display the first frame from the start.
+    set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(1), '/',int2str(vid.NumberOfFrames)));
+    
+    %Display the first frame in the table.
+    set(handles.result_table, 'Data', [1, 1, vid.CurrentTime]);
+
     %For all the frames besides the first one
     for i=2:vid.NumberOfFrames
         
@@ -153,7 +155,11 @@ if(handles.vidimported && ~handles.running)
         
         %Display the amount of frames in the GUI
         set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(i), '/',int2str(vid.NumberOfFrames)));
+        
+        %The current table with all entries.
         current = get(handles.result_table, 'Data');
+        
+        %Add the new entry to the table.
         set(handles.result_table, 'Data', [current; 1, i, vid.CurrentTime]);
     end
 
