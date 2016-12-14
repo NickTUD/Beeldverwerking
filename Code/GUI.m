@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 14-Dec-2016 09:37:10
+% Last Modified by GUIDE v2.5 14-Dec-2016 09:59:53
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -55,6 +55,9 @@ function GUI_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for GUI
 handles.output = hObject;
 
+%Boolean which checks if a video is imported or not.
+handles.vidimported = 0;
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -72,48 +75,65 @@ function varargout = GUI_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
+% --- Executes on button press in import_button.
+function import_button_Callback(hObject, eventdata, handles)
+% hObject    handle to import_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 
-% --- Executes on button press in pushbutton1.
-function pushbutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton1 (see GCBO)
+%Get the file name and folder path.
+[FileName,PathName,~] = uigetfile({'*.avi'}, 'Select video');
+
+%Concatenate them to get the full file path
+FullFileName = strcat(PathName, FileName);
+
+%Reads the video selected.
+vid = VideoReader(FullFileName);
+
+%Store the VideoReader object so it can be used together with the
+%startbutton
+handles.vid = vid;
+
+%Changes the boolean so that other buttons can be used.
+handles.vidimported = 1;
+
+%Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in play_button.
+function play_button_Callback(hObject, eventdata, handles)
+% hObject    handle to play_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton2.
-function pushbutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton2 (see GCBO)
+% --- Executes on button press in step_button.
+function step_button_Callback(hObject, eventdata, handles)
+% hObject    handle to step_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton3.
-function pushbutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton4.
-function pushbutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton4 (see GCBO)
+% --- Executes on button press in goto_button.
+function goto_button_Callback(hObject, eventdata, handles)
+% hObject    handle to goto_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
 
-function edit1_Callback(hObject, eventdata, handles)
-% hObject    handle to edit1 (see GCBO)
+function edit_frame_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_frame (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit1 as text
-%        str2double(get(hObject,'String')) returns contents of edit1 as a double
+% Hints: get(hObject,'String') returns contents of edit_frame as text
+%        str2double(get(hObject,'String')) returns contents of edit_frame as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit1 (see GCBO)
+function edit_frame_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_frame (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
