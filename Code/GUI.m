@@ -58,6 +58,12 @@ handles.output = hObject;
 %Boolean which checks if a video is imported or not.
 handles.vidimported = 0;
 
+%Boolean which checks if the video is already running.
+handles.running = 0;
+
+%Number which keeps track of which frame was selected.
+handles.frameselected = 0;
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -94,6 +100,9 @@ vid = VideoReader(FullFileName);
 %startbutton
 handles.vid = vid;
 
+%Updates the imported video text:
+set(handles.import_text, 'String', strcat('Video = ', FileName));
+
 %Focus on the main video axes
 axes(handles.main_video)
 
@@ -109,6 +118,7 @@ handles.vidimported = 1;
 %Update handles structure
 guidata(hObject, handles);
 
+
 % --- Executes on button press in play_button.
 function play_button_Callback(hObject, eventdata, handles)
 % hObject    handle to play_button (see GCBO)
@@ -116,7 +126,13 @@ function play_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %Only play the video if one is imported.
-if(handles.vidimported)
+if(handles.vidimported && ~handles.running)
+    
+    %Changed it so the file is running.
+    handles.running = 1;
+    
+    %Update handles structure
+    guidata(hObject, handles);
     
     %Get the videoreader object.
     vid = handles.vid;
@@ -133,7 +149,17 @@ if(handles.vidimported)
         %Display it in the main video axes
         h = get(handles.main_video, 'Children');
         set(h, 'CData', frame);
+        
+        %Display the amount of frames in the GUI
+        set(handles.frame_text, 'String', strcat('Frame #: ', int2str(i), '/',int2str(vid.NumberOfFrames)));
     end
+
+%The video is not running anymore after the loop.
+handles.running = 0;
+
+%Update handles structure
+guidata(hObject, handles);
+
 end
 
 
