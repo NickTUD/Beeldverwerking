@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 14-Dec-2016 09:59:53
+% Last Modified by GUIDE v2.5 14-Dec-2016 11:34:00
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -111,6 +111,7 @@ frame = read(vid,1);
 
 %Display the video in the main view.
 image(frame);
+set(handles.result_table, 'Data', [1, 1, vid.CurrentTime]);
 
 %Changes the boolean so that other buttons can be used.
 handles.vidimported = 1;
@@ -152,6 +153,8 @@ if(handles.vidimported && ~handles.running)
         
         %Display the amount of frames in the GUI
         set(handles.frame_text, 'String', strcat('Frame #: ', int2str(i), '/',int2str(vid.NumberOfFrames)));
+        current = get(handles.result_table, 'Data');
+        set(handles.result_table, 'Data', [current; 1, i, vid.CurrentTime]);
     end
 
 %The video is not running anymore after the loop.
@@ -198,3 +201,5 @@ function edit_frame_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
