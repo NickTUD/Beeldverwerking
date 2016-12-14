@@ -94,6 +94,15 @@ vid = VideoReader(FullFileName);
 %startbutton
 handles.vid = vid;
 
+%Focus on the main video axes
+axes(handles.main_video)
+
+%Read the first frame
+frame = read(vid,1);
+
+%Display the video in the main view.
+image(frame);
+
 %Changes the boolean so that other buttons can be used.
 handles.vidimported = 1;
 
@@ -105,6 +114,27 @@ function play_button_Callback(hObject, eventdata, handles)
 % hObject    handle to play_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+%Only play the video if one is imported.
+if(handles.vidimported)
+    
+    %Get the videoreader object.
+    vid = handles.vid;
+    
+    %Focus on the main video axes
+    axes(handles.main_video)
+    
+    %For all the frames besides the first one
+    for i=2:vid.NumberOfFrames
+        
+        %Get the frame
+        frame = read(vid,i);
+        
+        %Display it in the main video axes
+        h = get(handles.main_video, 'Children');
+        set(h, 'CData', frame);
+    end
+end
 
 
 % --- Executes on button press in step_button.
