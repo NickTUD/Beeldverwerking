@@ -101,7 +101,7 @@ vid = VideoReader(FullFileName);
 handles.vid = vid;
 
 %Updates the imported video text:
-set(handles.import_text, 'String', strcat('Video = ', FileName));
+set(handles.import_text, 'String', strcat('Video =',{' '}, FileName));
 
 %Focus on the main video axes
 axes(handles.main_video)
@@ -151,7 +151,7 @@ if(handles.vidimported && ~handles.running)
         set(h, 'CData', frame);
         
         %Display the amount of frames in the GUI
-        set(handles.frame_text, 'String', strcat('Frame #: ', int2str(i), '/',int2str(vid.NumberOfFrames)));
+        set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(i), '/',int2str(vid.NumberOfFrames)));
     end
 
 %The video is not running anymore after the loop.
@@ -175,6 +175,30 @@ function goto_button_Callback(hObject, eventdata, handles)
 % hObject    handle to goto_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+%Only play the video if one is imported.
+if(handles.vidimported && ~handles.running)
+    
+    %Get the videoreader object.
+    vid = handles.vid;
+    
+    %Get the framenumber specified in the edit box.
+    framenumber = get(handles.edit_frame, 'String');
+
+    %Parse the number to an integer.
+    parsednumber = str2double(framenumber);
+
+    %Get video frame
+    frame = read(vid,parsednumber);
+    
+    %Display it in the main video axes
+    h = get(handles.main_video, 'Children');
+    set(h, 'CData', frame);
+    
+    %Display the amount of frames in the GUI
+    set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(parsednumber), '/',int2str(vid.NumberOfFrames)));
+end
+
 
 
 
