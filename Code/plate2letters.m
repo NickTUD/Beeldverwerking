@@ -1,16 +1,16 @@
 function [croppedChars] = plate2letters()
 %PLATE2LETTERS Summary of this function goes here
 %   Detailed explanation goes here
-for i=1:2
+for i=1:1
     plate_dip = readim(strcat('c:\users\pinda\documents\beeldverwerking project\beeldverwerking\resources\images\testplate',num2str(i),'.png',''));
     grayScaleImage = preTasks(plate_dip);
     binaryImage = thresholding(grayScaleImage);
     objects = removeNoisePostThresholding(binaryImage);
-    labelobjects = label(objects);
+    labeledobjects = label(objects);
     data = measure(objects,[],{'Size','CartesianBox', 'Minimum'},[],Inf,0,0);
     [binaryarray,characterlabels] = getCharacterLikeLabels(data);
     finalLabelNumbers = getTop6Objects(data,binaryarray);
-    croppedChars = cropChars(binaryImage,finalLabelNumbers,data);    
+    croppedChars = cropChars(labeledobjects,finalLabelNumbers,data);    
 end
 end
 
@@ -24,9 +24,7 @@ plate_graydip = dip_image(plate_grayscale);
 %Histogram stretch to increase contrast
 unsharpGrayImage = stretch(plate_graydip,0,100,0,255);
 %Sharpen image using gaussian filter
-test4 = 2*unsharpGrayImage - gaussf(unsharpGrayImage,10);
-%Apply filter again(?)
-grayImage = gaussf(test4);
+grayImage = 2*unsharpGrayImage - gaussf(unsharpGrayImage,10);
 end
 
 function thresholdedImage = thresholding(plate_gray)
@@ -57,27 +55,31 @@ ids = data.ID;
 labelNumbersCharacters = ids(correctAspectRatioLabels); %Only keep the label ID's of nuts.
 end
 
-function finalLabels = getTop6Objects(data,binaryarray)
+function finalLabelsSorted = getTop6Objects(data,binaryarray)
 %Get total amount of ID's
 lengtharray = length(data.ID);
 %numberobjects1 = dip_image(ismember(double(labelobjects),characterlabels));
 %Sort objects on size. Objects with incorrect aspect ratio get size 0.
 test = sortrows([data.size .* binaryarray;data.ID]',1);
 %Only keep the 6 objects with highest size.
-finalLabels = test(lengtharray-5:lengtharray,2);
+finalLabelsUnsorted = test(lengtharray-5:lengtharray,2);
+
+test2 = sortrows([data.Minimum(1,finalLabelsUnsorted)',finalLabelsUnsorted],1);
+finalLabelsSorted = test2(:,2);
+
 end
 
-function croppedChars = cropChars(image,labels,data)
-amountLabels = numel(labels)
+function croppedChars = cropChars(labeledimage,labels,data)
+amountLabels = numel(labels);
 charCellArray = cell([1,amountLabels]);
 for idx = 1:amountLabels
         labelnumber = labels(idx);
-        %result = labelobjects == labelnumber;
+        singleobjectimage = labeledimage == labelnumber;
         minx = data.Minimum(1,labelnumber);
         miny = data.Minimum(2,labelnumber);
         dimx = data.CartesianBox(1,labelnumber);
         dimy = data.CartesianBox(2,labelnumber);
-        croppedIm = cut(image,[dimx+10,dimy+10],[minx-5,miny-5]);
+        croppedIm = cut(singleobjectimage,[dimx+10,dimy+10],[minx-5,miny-5]);
         charCellArray{idx} = croppedIm;
 end
 croppedChars = charCellArray;
