@@ -69,7 +69,7 @@ finalLabelsSorted = test2(:,2);
 
 end
 
-function croppedChars = cropChars(labeledimage,labels,data)
+function croppedChars = cropChars(labeledimage,binaryimage,labels,data)
 amountLabels = numel(labels);
 charCellArray = cell([1,amountLabels]);
 for idx = 1:amountLabels
@@ -79,7 +79,8 @@ for idx = 1:amountLabels
         miny = data.Minimum(2,labelnumber);
         dimx = data.CartesianBox(1,labelnumber);
         dimy = data.CartesianBox(2,labelnumber);
-        croppedIm = cut(singleobjectimage,[dimx+10,dimy+10],[minx-5,miny-5]);
+        %37x44
+        croppedImDip = cut(binaryimage,[dimx,dimy],[minx,miny]);
         charCellArray{idx} = croppedIm;
 end
 croppedChars = charCellArray;
