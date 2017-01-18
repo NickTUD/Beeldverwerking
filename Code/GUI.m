@@ -163,12 +163,16 @@ if(handles.vidimported && ~handles.running)
         set(handles.result_table, 'Data', [current; 1, i, vid.CurrentTime]);
     end
 
-%The video is not running anymore after the loop.
-handles.running = 0;
+    %The video is not running anymore after the loop.
+    handles.running = 0;
 
-%Update handles structure
-guidata(hObject, handles);
-
+    %Update handles structure
+    guidata(hObject, handles);
+    
+    % Compare results
+    results = get(handles.result_table, 'Data');
+    resultsTable = {results(:,1), results(:,2), results(:,3)};
+    checkSolution(resultsTable, 'trainingSolutions.mat')
 end
 
 
