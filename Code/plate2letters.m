@@ -1,23 +1,25 @@
-function [croppedChars,dashlocations] = plate2letters()
+function [croppedChars,dashlocations] = plate2letters(plate)
 %PLATE2LETTERS Summary of this function goes here
 %   Detailed explanation goes here
-for i=9:9
-    plate_dip = readim(strcat('c:\users\pinda\documents\beeldverwerking project\beeldverwerking\resources\images\testplate',num2str(i),'.png',''));
-    grayScaleImage = preTasks(plate_dip);
+    grayScaleImage = preTasks(plate);
     binaryImage = thresholding(grayScaleImage);
     objects = removeNoisePostThresholding(binaryImage);
     labeledobjects = label(objects);
     data = measure(objects,[],{'Size','CartesianBox', 'Maximum', 'Minimum'},[],Inf,0,0);
     binaryarray = getCharacterLikeLabels(data);
+    if(sum(binaryarray)>5)
     finalLabelNumbers = getTop6Objects(labeledobjects,data,binaryarray);
     dashlocations = getDashLocations(data,finalLabelNumbers);
-    croppedChars = cropChars(labeledobjects,binaryImage,finalLabelNumbers,data);    
-end
+    croppedChars = cropChars(labeledobjects,binaryImage,finalLabelNumbers,data);
+    else
+    croppedChars = cell(0);
+    dashlocations = [0, 0];
+    end
 end
 
-function grayImage = preTasks(plate_dip)
+function grayImage = preTasks(plate)
 %Convert to 8 bit unsigned integer 
-plate_uint8 = uint8(plate_dip);
+plate_uint8 = uint8(plate);
 %Transform it to grayscale
 plate_grayscale = rgb2gray(plate_uint8);
 %Transform to dip image type
@@ -60,12 +62,12 @@ test = sortrows([data.size .* binaryarray;data.ID]',1);
 %Only keep the 6 objects with highest size.
 finalLabelsUnsorted = test(lengtharray-5:lengtharray,2);
 
-test2 = sortrows([data.Minimum(1,finalLabelsUnsorted)',finalLabelsUnsorted],1)
+test2 = sortrows([data.Minimum(1,finalLabelsUnsorted)',finalLabelsUnsorted],1);
 
 finalLabelsSorted = test2(:,2);
 
 %Extra line which gives back an image for checking reults
-numberobjects1 = dip_image(ismember(double(labelobjects),finalLabelsSorted))
+%numberobjects1 = dip_image(ismember(double(labelobjects),finalLabelsSorted))
 
 end
 
