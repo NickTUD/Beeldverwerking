@@ -78,6 +78,6 @@ function [character] = getCharacter(binaryImage)
         count(i) = sum(sum(image)); 
     end
     [~,index] = max(count);
-    character = index;
+    character = Map(index);
 end
 
