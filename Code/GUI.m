@@ -118,7 +118,7 @@ function play_button_Callback(hObject, eventdata, handles)
 
 %Only play the video if one is imported.
 if(handles.vidimported && ~handles.running)
-    
+
     %Changed it so the file is running.
     handles.running = 1;
     
@@ -140,27 +140,53 @@ if(handles.vidimported && ~handles.running)
     %Display the first frame from the start.
     set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(1), '/',int2str(vid.NumberOfFrames)));
     
-    %Display the first frame in the table.
-    set(handles.result_table, 'Data', [1, 1, vid.CurrentTime]);
+    ROIs = findImageROIs(frame);
+    for k = 1:size(ROIs, 1)
+        
+        [array,~] = plate2letters(ROIs.Image{k});
 
+        binaryImage = array{1,1};
+        string = num2str(getCharacter(binaryImage));
+
+        for j = 2:6
+            binaryImage = array{1,j};
+            string = strcat(string, num2str(getCharacter(binaryImage)));
+        end
+        
+    %Display the first frame in the table.
+    set(handles.result_table, 'Data', {string, 1, vid.CurrentTime});
+    end
+    
     %For all the frames besides the first one
     for i=2:vid.NumberOfFrames
         
         %Get the frame
         frame = read(vid,i);
+        ROIs = findImageROIs(frame);
+        for k = 1:size(ROIs, 1)
+        
+            [array,~] = plate2letters(ROIs.Image{k});
+
+            binaryImage = array{1,1};
+            string = num2str(getCharacter(binaryImage));
+
+            for j = 2:6
+                binaryImage = array{1,j};
+                string = strcat(string, num2str(getCharacter(binaryImage)));
+            end
+            
+            %The current table with all entries.
+            current = get(handles.result_table, 'Data');
+            %Add the new entry to the table.
+            set(handles.result_table, 'Data', vertcat(current, {string, i, vid.CurrentTime}));
+        end
         
         %Display it in the main video axes
         h = get(handles.main_video, 'Children');
         set(h, 'CData', frame);
         
         %Display the amount of frames in the GUI
-        set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(i), '/',int2str(vid.NumberOfFrames)));
-        
-        %The current table with all entries.
-        current = get(handles.result_table, 'Data');
-        
-        %Add the new entry to the table.
-        set(handles.result_table, 'Data', [current; 1, i, vid.CurrentTime]);
+        set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(i), '/',int2str(vid.NumberOfFrames)));    
     end
 
     %The video is not running anymore after the loop.
