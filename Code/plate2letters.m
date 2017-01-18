@@ -1,16 +1,17 @@
-function [croppedChars] = plate2letters()
+function [croppedChars,dashlocations] = plate2letters()
 %PLATE2LETTERS Summary of this function goes here
 %   Detailed explanation goes here
-for i=1:1
+for i=9:9
     plate_dip = readim(strcat('c:\users\pinda\documents\beeldverwerking project\beeldverwerking\resources\images\testplate',num2str(i),'.png',''));
     grayScaleImage = preTasks(plate_dip);
     binaryImage = thresholding(grayScaleImage);
     objects = removeNoisePostThresholding(binaryImage);
     labeledobjects = label(objects);
-    data = measure(objects,[],{'Size','CartesianBox', 'Minimum'},[],Inf,0,0);
-    [binaryarray,characterlabels] = getCharacterLikeLabels(data);
-    finalLabelNumbers = getTop6Objects(data,binaryarray);
-    croppedChars = cropChars(labeledobjects,finalLabelNumbers,data);    
+    data = measure(objects,[],{'Size','CartesianBox', 'Maximum', 'Minimum'},[],Inf,0,0);
+    binaryarray = getCharacterLikeLabels(data);
+    finalLabelNumbers = getTop6Objects(labeledobjects,data,binaryarray);
+    dashlocations = getDashLocations(data,finalLabelNumbers);
+    croppedChars = cropChars(labeledobjects,binaryImage,finalLabelNumbers,data);    
 end
 end
 
@@ -41,7 +42,7 @@ test = brmedgeobjs(plate_thresh,1);
 removedNoiseImage = bopening(test,1);
 end
 
-function [correctAspectRatioLabels,labelNumbersCharacters] = getCharacterLikeLabels(data)
+function correctAspectRatioLabels = getCharacterLikeLabels(data)
 %Calculate aspect ratio of the bounding box.
 aspectRatioBBox = data.CartesianBox(2,:) ./ data.CartesianBox(1,:);
 %Calculate extent (percentage of object pixels in bounding box).
@@ -49,24 +50,35 @@ aspectRatioBBox = data.CartesianBox(2,:) ./ data.CartesianBox(1,:);
 extent = data.size ./(data.CartesianBox(2,:) .* data.CartesianBox(1,:));
 %Only keep labels with correct aspect ratios.
 correctAspectRatioLabels = aspectRatioBBox > 1;
-%Get ID's from the numbers
-ids = data.ID;
-%Only keep labels with correct aspect ratio.
-labelNumbersCharacters = ids(correctAspectRatioLabels); %Only keep the label ID's of nuts.
 end
 
-function finalLabelsSorted = getTop6Objects(data,binaryarray)
+function finalLabelsSorted = getTop6Objects(labelobjects,data,binaryarray)
 %Get total amount of ID's
 lengtharray = length(data.ID);
-%numberobjects1 = dip_image(ismember(double(labelobjects),characterlabels));
 %Sort objects on size. Objects with incorrect aspect ratio get size 0.
 test = sortrows([data.size .* binaryarray;data.ID]',1);
 %Only keep the 6 objects with highest size.
 finalLabelsUnsorted = test(lengtharray-5:lengtharray,2);
 
-test2 = sortrows([data.Minimum(1,finalLabelsUnsorted)',finalLabelsUnsorted],1);
+test2 = sortrows([data.Minimum(1,finalLabelsUnsorted)',finalLabelsUnsorted],1)
+
 finalLabelsSorted = test2(:,2);
 
+%Extra line which gives back an image for checking reults
+numberobjects1 = dip_image(ismember(double(labelobjects),finalLabelsSorted))
+
+end
+
+function dashlocations = getDashLocations(data,finalLabelsSorted)
+minimums = data.Minimum(1,finalLabelsSorted);
+maximums = data.Maximum(1,finalLabelsSorted);
+
+spaces = minimums(2:6) - maximums(1:5);
+[~,sortIndex] = sort(spaces(:),'descend');
+%Gives the 2 locations of the dashes. For example:
+%[2 4] as a result means that the plate has the form AA-33-BB
+%while for example [1 4] means A-333-BB
+dashlocations = sortIndex(1:2);
 end
 
 function croppedChars = cropChars(labeledimage,binaryimage,labels,data)
@@ -80,8 +92,16 @@ for idx = 1:amountLabels
         dimx = data.CartesianBox(1,labelnumber);
         dimy = data.CartesianBox(2,labelnumber);
         %37x44
-        croppedImDip = cut(binaryimage,[dimx,dimy],[minx,miny]);
-        charCellArray{idx} = croppedIm;
+        croppedIm = logical(cut(binaryimage,[dimx,dimy],[minx,miny]));
+        resized1 = imresize(croppedIm,[44 NaN]);
+        imagesize = size(resized1);
+        if(rem(imagesize(2),2))
+            resultimage = padarray(resized1,[0 (37-imagesize(2))/2]);
+        else
+            tempimage = padarray(resized1,[0 ceil((37-imagesize(2))/2)]);
+            resultimage = tempimage(:,1:37);
+        end
+        charCellArray{idx} = resultimage;
 end
 croppedChars = charCellArray;
 end
