@@ -49,7 +49,7 @@ relativeheight = data.CartesianBox(2,:) ./ imageHeight;
 %Only keep labels with correct aspect ratios.
 correctlabelsbinary = aspectRatioBBox > 1 & extent > 0.2 & extent < 0.9 & relativeheight > 0.5;
 ids = data.ID;
-correctCharacterLabelsUnsorted = ids(correctlabelsbinary);
+correctCharacterLabelsUnsorted = ids(correctlabelsbinary)';
 test2 = sortrows([data.Minimum(1,correctCharacterLabelsUnsorted)',correctCharacterLabelsUnsorted],1);
 
 correctCharacterLabelsSorted = test2(:,2);
