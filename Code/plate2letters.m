@@ -7,7 +7,7 @@ function [croppedChars,dashlocations] = plate2letters(plate)
     labeledobjects = label(objects);
     data = measure(objects,[],{'Size','CartesianBox', 'Maximum', 'Minimum'},[],Inf,0,0);
     finalLabelNumbers = getCharacterLikeLabels(data,size(plate,1));
-    numberobjects1 = dip_image(ismember(double(labeledobjects),finalLabelNumbers))
+    numberobjects1 = dip_image(ismember(double(labeledobjects),finalLabelNumbers));
     dashlocations = getDashLocations(data,finalLabelNumbers);
     croppedChars = cropChars(labeledobjects,binaryImage,finalLabelNumbers,data);
 end
@@ -39,7 +39,7 @@ test = brmedgeobjs(plate_thresh,1);
 removedNoiseImage = bopening(test,1);
 end
 
-function correctCharacterlabels = getCharacterLikeLabels(data,imageHeight)
+function correctCharacterLabelsSorted = getCharacterLikeLabels(data,imageHeight)
 %Calculate aspect ratio of the bounding box.
 aspectRatioBBox = data.CartesianBox(2,:) ./ data.CartesianBox(1,:);
 %Calculate extent (percentage of object pixels in bounding box).
@@ -49,7 +49,10 @@ relativeheight = data.CartesianBox(2,:) ./ imageHeight;
 %Only keep labels with correct aspect ratios.
 correctlabelsbinary = aspectRatioBBox > 1 & extent > 0.2 & extent < 0.9 & relativeheight > 0.5;
 ids = data.ID;
-correctCharacterlabels = ids(correctlabelsbinary);
+correctCharacterLabelsUnsorted = ids(correctlabelsbinary);
+test2 = sortrows([data.Minimum(1,correctCharacterLabelsUnsorted)',correctCharacterLabelsUnsorted],1);
+
+correctCharacterLabelsSorted = test2(:,2);
 end
 
 % function finalLabelsSorted = getTop6Objects(labelobjects,data,binaryarray)
