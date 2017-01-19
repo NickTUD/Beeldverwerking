@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 14-Dec-2016 11:34:00
+% Last Modified by GUIDE v2.5 19-Jan-2017 10:14:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -270,5 +270,3 @@ function edit_frame_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
