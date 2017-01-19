@@ -6,8 +6,8 @@ function [croppedChars,dashlocations] = plate2letters(plate)
     objects = removeNoisePostThresholding(binaryImage);
     labeledobjects = label(objects);
     data = measure(objects,[],{'Size','CartesianBox', 'Maximum', 'Minimum'},[],Inf,0,0);
-    binaryarray = getCharacterLikeLabels(data);
-    finalLabelNumbers = getTop6Objects(labeledobjects,data,binaryarray);
+    finalLabelNumbers = getCharacterLikeLabels(data,size(plate,1));
+    numberobjects1 = dip_image(ismember(double(labeledobjects),finalLabelNumbers))
     dashlocations = getDashLocations(data,finalLabelNumbers);
     croppedChars = cropChars(labeledobjects,binaryImage,finalLabelNumbers,data);
 end
@@ -39,43 +39,47 @@ test = brmedgeobjs(plate_thresh,1);
 removedNoiseImage = bopening(test,1);
 end
 
-function correctAspectRatioLabels = getCharacterLikeLabels(data)
+function correctCharacterlabels = getCharacterLikeLabels(data,imageHeight)
 %Calculate aspect ratio of the bounding box.
 aspectRatioBBox = data.CartesianBox(2,:) ./ data.CartesianBox(1,:);
 %Calculate extent (percentage of object pixels in bounding box).
 %Objects with really low or high extent is what we don't need.
 extent = data.size ./(data.CartesianBox(2,:) .* data.CartesianBox(1,:));
+relativeheight = data.CartesianBox(2,:) ./ imageHeight;
 %Only keep labels with correct aspect ratios.
-correctAspectRatioLabels = aspectRatioBBox > 1 && extent > 0.2 && extent < 0.9;
+correctlabelsbinary = aspectRatioBBox > 1 & extent > 0.2 & extent < 0.9 & relativeheight > 0.5;
+ids = data.ID;
+correctCharacterlabels = ids(correctlabelsbinary);
 end
 
-function finalLabelsSorted = getTop6Objects(labelobjects,data,binaryarray)
-%Get total amount of ID's
-lengtharray = length(data.ID);
-%Sort objects on size. Objects with incorrect aspect ratio get size 0.
-test = sortrows([data.size .* binaryarray;data.ID]',1);
-%Only keep the 6 objects with highest size.
-finalLabelsUnsorted = test(lengtharray-5:lengtharray,2);
+% function finalLabelsSorted = getTop6Objects(labelobjects,data,binaryarray)
+% %Get total amount of ID's
+% lengtharray = length(data.ID);
+% %Sort objects on size. Objects with incorrect aspect ratio get size 0.
+% test = sortrows([data.size .* binaryarray;data.ID]',1);
+% %Only keep the 6 objects with highest size.
+% finalLabelsUnsorted = test(lengtharray-5:lengtharray,2);
+% 
+% test2 = sortrows([data.Minimum(1,finalLabelsUnsorted)',finalLabelsUnsorted],1);
+% 
+% finalLabelsSorted = test2(:,2);
+% 
+% %Extra line which gives back an image for checking reults
+% numberobjects1 = dip_image(ismember(double(labelobjects),finalLabelsSorted))
 
-test2 = sortrows([data.Minimum(1,finalLabelsUnsorted)',finalLabelsUnsorted],1);
-
-finalLabelsSorted = test2(:,2);
-
-%Extra line which gives back an image for checking reults
-%numberobjects1 = dip_image(ismember(double(labelobjects),finalLabelsSorted))
-
-end
+% end
 
 function dashlocations = getDashLocations(data,finalLabelsSorted)
 minimums = data.Minimum(1,finalLabelsSorted);
 maximums = data.Maximum(1,finalLabelsSorted);
+size = numel(finalLabelsSorted);
 
-spaces = minimums(2:6) - maximums(1:5);
+spaces = minimums(2:size) - maximums(1:size-1);
 [~,sortIndex] = sort(spaces(:),'descend');
 %Gives the 2 locations of the dashes. For example:
 %[2 4] as a result means that the plate has the form AA-33-BB
 %while for example [1 4] means A-333-BB
-dashlocations = sortIndex(1:2);
+dashlocations = sort(sortIndex(1:2));
 end
 
 function croppedChars = cropChars(labeledimage,binaryimage,labels,data)
