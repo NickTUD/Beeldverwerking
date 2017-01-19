@@ -174,7 +174,6 @@ if(handles.vidimported && ~handles.running)
         
             [array,loc] = plate2letters(ROIs.Image{k});
             [~, y] = size(array);
-            binaryImage = array{1,1};
             string = '';
             for j = 1:y
                 binaryImage = array{1,j};

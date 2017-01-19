@@ -27,7 +27,7 @@ end
 
 function thresholdedImage = thresholding(plate_gray)
 %Threshold using isodata algorithm
-[out,~] = threshold(plate_gray,'fixed',100);
+[out,~] = threshold(plate_gray,'Isodata',inf);
 %Invert image to make letters foreground
 thresholdedImage = ~out;
 end
@@ -80,7 +80,12 @@ spaces = minimums(2:size) - maximums(1:size-1);
 %Gives the 2 locations of the dashes. For example:
 %[2 4] as a result means that the plate has the form AA-33-BB
 %while for example [1 4] means A-333-BB
-dashlocations = sort(sortIndex(1:2));
+x = length(sortIndex);
+if x == 0 || x == 1
+    dashlocations = [2; 4];
+else
+    dashlocations = sort(sortIndex(1:2));
+end
 end
 
 function croppedChars = cropChars(labeledimage,binaryimage,labels,data)
