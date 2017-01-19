@@ -151,7 +151,7 @@ if(handles.vidimported && ~handles.running)
         [~, y] = size(array);
         binaryImage = array{1,1};
 
-        string = num2str(getCharacter(binaryImage));
+        string = num2str(getCharacter(binaryImage, handles.characterTable));
               
         for j = 2:y
             for s = 1:2
@@ -184,7 +184,7 @@ if(handles.vidimported && ~handles.running)
             for j = 2:y
                 for t = 1:2
                     binaryImage = array{1,j};
-                    if loc(s) == j
+                    if loc(t) == j
                         string = strcat(string, num2str(getCharacter(binaryImage, handles.characterTable))+'-');
                     else
                         string = strcat(string, num2str(getCharacter(binaryImage, handles.characterTable)));
