@@ -27,16 +27,14 @@ end
 
 function thresholdedImage = thresholding(plate_gray)
 %Threshold using isodata algorithm
-[out,~] = threshold(plate_gray,'isodata',Inf);
+[out,~] = threshold(plate_gray,'fixed',100);
 %Invert image to make letters foreground
 thresholdedImage = ~out;
 end
 
 function removedNoiseImage = removeNoisePostThresholding(plate_thresh)
 %Remove objects connected to the edge since they are not our letters
-test = brmedgeobjs(plate_thresh,1);
-%Remove small granular noise using opening
-removedNoiseImage = bopening(test,1);
+removedNoiseImage = brmedgeobjs(plate_thresh,1);
 end
 
 function correctCharacterLabelsSorted = getCharacterLikeLabels(data,imageHeight)
