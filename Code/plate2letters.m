@@ -27,7 +27,7 @@ end
 
 function thresholdedImage = thresholding(plate_gray)
 %Threshold using isodata algorithm
-[out,~] = threshold(plate_gray,'fixed',100);
+[out,~] = threshold(plate_gray,'Isodata',Inf);
 %Invert image to make letters foreground
 thresholdedImage = ~out;
 end
