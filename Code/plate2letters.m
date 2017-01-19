@@ -100,14 +100,14 @@ for idx = 1:amountLabels
         dimy = data.CartesianBox(2,labelnumber);
         %37x44
         croppedIm = logical(cut(binaryimage,[dimx,dimy],[minx,miny]));
-        resized1 = imresize(croppedIm,[44 NaN]);
-        imagesize = size(resized1);
-        if(rem(imagesize(2),2))
-            resultimage = padarray(resized1,[0 (37-imagesize(2))/2]);
-        else
-            tempimage = padarray(resized1,[0 ceil((37-imagesize(2))/2)]);
-            resultimage = tempimage(:,1:37);
-        end
+        resultimage = imresize(croppedIm,[44 37]);
+%         imagesize = size(resized1);
+%         if(rem(imagesize(2),2))
+%             resultimage = padarray(resized1,[0 (37-imagesize(2))/2]);
+%         else
+%             tempimage = padarray(resized1,[0 ceil((37-imagesize(2))/2)]);
+%             resultimage = tempimage(:,1:37);
+%         end
         charCellArray{idx} = resultimage;
 end
 croppedChars = charCellArray;
