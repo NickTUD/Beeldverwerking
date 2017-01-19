@@ -5,6 +5,6 @@ function [character] = getCharacter(binaryImage, characterTable)
         count(i) = sum(sum(image)); 
     end
     [~,index] = max(count);
-    character = characterTable.characterTable.Character{index};
+    character = characterTable.Character{index};
 end
 

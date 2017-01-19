@@ -64,6 +64,10 @@ handles.running = 0;
 %Number which keeps track of which frame was selected.
 handles.frameselected = 0;
 
+%Import character template table
+structCharacterTable = load('characterTable.mat');
+handles.characterTable = structCharacterTable.characterTable;
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -143,14 +147,17 @@ if(handles.vidimported && ~handles.running)
     ROIs = findImageROIs(frame);
     for k = 1:size(ROIs, 1)
         
-        [array,~] = plate2letters(ROIs.Image{k});
-
+        [array,loc] = plate2letters(ROIs.Image{k});
+        [~, y] = size(array);
         binaryImage = array{1,1};
-        string = num2str(getCharacter(binaryImage));
 
-        for j = 2:6
+        string = '';
+        for j = 1:y
             binaryImage = array{1,j};
-            string = strcat(string, num2str(getCharacter(binaryImage)));
+            if sum((loc == j-1)) > 0
+                string = sprintf('%s-', string);
+            end
+            string = sprintf('%s%s', string, getCharacter(binaryImage, handles.characterTable));
         end
         
     %Display the first frame in the table.
@@ -165,14 +172,16 @@ if(handles.vidimported && ~handles.running)
         ROIs = findImageROIs(frame);
         for k = 1:size(ROIs, 1)
         
-            [array,~] = plate2letters(ROIs.Image{k});
-
+            [array,loc] = plate2letters(ROIs.Image{k});
+            [~, y] = size(array);
             binaryImage = array{1,1};
-            string = num2str(getCharacter(binaryImage));
-
-            for j = 2:6
+            string = '';
+            for j = 1:y
                 binaryImage = array{1,j};
-                string = strcat(string, num2str(getCharacter(binaryImage)));
+                if sum((loc == j-1)) > 0
+                    string = sprintf('%s-', string);
+                end
+                string = sprintf('%s%s', string, getCharacter(binaryImage, handles.characterTable));
             end
             
             %The current table with all entries.
