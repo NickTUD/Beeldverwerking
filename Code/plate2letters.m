@@ -80,7 +80,12 @@ spaces = minimums(2:size) - maximums(1:size-1);
 %Gives the 2 locations of the dashes. For example:
 %[2 4] as a result means that the plate has the form AA-33-BB
 %while for example [1 4] means A-333-BB
-dashlocations = sort(sortIndex(1:2));
+x = length(sortIndex);
+if x == 0 || x == 1
+    dashlocations = [2; 4];
+else
+    dashlocations = sort(sortIndex(1:2));
+end
 end
 
 function croppedChars = cropChars(labeledimage,binaryimage,labels,data)
@@ -95,14 +100,14 @@ for idx = 1:amountLabels
         dimy = data.CartesianBox(2,labelnumber);
         %37x44
         croppedIm = logical(cut(binaryimage,[dimx,dimy],[minx,miny]));
-        resized1 = imresize(croppedIm,[44 NaN]);
-        imagesize = size(resized1);
-        if(rem(imagesize(2),2))
-            resultimage = padarray(resized1,[0 (37-imagesize(2))/2]);
-        else
-            tempimage = padarray(resized1,[0 ceil((37-imagesize(2))/2)]);
-            resultimage = tempimage(:,1:37);
-        end
+        resultimage = imresize(croppedIm,[44 37]);
+%         imagesize = size(resized1);
+%         if(rem(imagesize(2),2))
+%             resultimage = padarray(resized1,[0 (37-imagesize(2))/2]);
+%         else
+%             tempimage = padarray(resized1,[0 ceil((37-imagesize(2))/2)]);
+%             resultimage = tempimage(:,1:37);
+%         end
         charCellArray{idx} = resultimage;
 end
 croppedChars = charCellArray;
