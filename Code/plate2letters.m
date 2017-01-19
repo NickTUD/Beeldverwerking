@@ -7,14 +7,9 @@ function [croppedChars,dashlocations] = plate2letters(plate)
     labeledobjects = label(objects);
     data = measure(objects,[],{'Size','CartesianBox', 'Maximum', 'Minimum'},[],Inf,0,0);
     binaryarray = getCharacterLikeLabels(data);
-    if(sum(binaryarray)>5)
     finalLabelNumbers = getTop6Objects(labeledobjects,data,binaryarray);
     dashlocations = getDashLocations(data,finalLabelNumbers);
     croppedChars = cropChars(labeledobjects,binaryImage,finalLabelNumbers,data);
-    else
-    croppedChars = cell(0);
-    dashlocations = [0, 0];
-    end
 end
 
 function grayImage = preTasks(plate)
@@ -51,7 +46,7 @@ aspectRatioBBox = data.CartesianBox(2,:) ./ data.CartesianBox(1,:);
 %Objects with really low or high extent is what we don't need.
 extent = data.size ./(data.CartesianBox(2,:) .* data.CartesianBox(1,:));
 %Only keep labels with correct aspect ratios.
-correctAspectRatioLabels = aspectRatioBBox > 1;
+correctAspectRatioLabels = aspectRatioBBox > 1 && extent > 0.2 && extent < 0.9;
 end
 
 function finalLabelsSorted = getTop6Objects(labelobjects,data,binaryarray)
