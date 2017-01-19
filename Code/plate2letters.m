@@ -46,7 +46,7 @@ aspectRatioBBox = data.CartesianBox(2,:) ./ data.CartesianBox(1,:);
 %Objects with really low or high extent is what we don't need.
 extent = data.size ./(data.CartesianBox(2,:) .* data.CartesianBox(1,:));
 %Only keep labels with correct aspect ratios.
-correctAspectRatioLabels = aspectRatioBBox > 1 && extent > 0.2 && extent < 0.9;
+correctAspectRatioLabels = aspectRatioBBox > 1 & extent > 0.2 & extent < 0.9;
 end
 
 function finalLabelsSorted = getTop6Objects(labelobjects,data,binaryarray)

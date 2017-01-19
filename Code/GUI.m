@@ -143,14 +143,21 @@ if(handles.vidimported && ~handles.running)
     ROIs = findImageROIs(frame);
     for k = 1:size(ROIs, 1)
         
-        [array,~] = plate2letters(ROIs.Image{k});
-
+        [array,loc] = plate2letters(ROIs.Image{k});
+        [~, y] = size(array);
         binaryImage = array{1,1};
         string = num2str(getCharacter(binaryImage));
-
-        for j = 2:6
-            binaryImage = array{1,j};
-            string = strcat(string, num2str(getCharacter(binaryImage)));
+        
+        
+        for j = 2:y
+            for s = 1:2
+                binaryImage = array{1,j};
+                if loc(s) == j
+                    string = strcat(string, num2str(getCharacter(binaryImage))+'-');
+                else
+                    string = strcat(string, num2str(getCharacter(binaryImage)));
+                end
+            end
         end
         
     %Display the first frame in the table.
@@ -165,14 +172,20 @@ if(handles.vidimported && ~handles.running)
         ROIs = findImageROIs(frame);
         for k = 1:size(ROIs, 1)
         
-            [array,~] = plate2letters(ROIs.Image{k});
-
+            [array,loc] = plate2letters(ROIs.Image{k});
+            [~, y] = size(array);
             binaryImage = array{1,1};
             string = num2str(getCharacter(binaryImage));
 
-            for j = 2:6
-                binaryImage = array{1,j};
-                string = strcat(string, num2str(getCharacter(binaryImage)));
+            for j = 2:y
+                for t = 1:2
+                    binaryImage = array{1,j};
+                    if loc(s) == j
+                        string = strcat(string, num2str(getCharacter(binaryImage))+'-');
+                    else
+                        string = strcat(string, num2str(getCharacter(binaryImage)));
+                    end
+                end
             end
             
             %The current table with all entries.
