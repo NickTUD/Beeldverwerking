@@ -6,10 +6,15 @@ function [croppedChars,dashlocations] = plate2letters(plate)
     objects = removeNoisePostThresholding(binaryImage);
     labeledobjects = label(objects);
     data = measure(objects,[],{'Size','CartesianBox', 'Maximum', 'Minimum'},[],Inf,0,0);
-    finalLabelNumbers = getCharacterLikeLabels(data,size(plate,1));
-    numberobjects1 = dip_image(ismember(double(labeledobjects),finalLabelNumbers));
-    dashlocations = getDashLocations(data,finalLabelNumbers);
-    croppedChars = cropChars(labeledobjects,binaryImage,finalLabelNumbers,data);
+    if(numel(msr.Size) == 0)
+        finalLabelNumbers = getCharacterLikeLabels(data,size(plate,1));
+        numberobjects1 = dip_image(ismember(double(labeledobjects),finalLabelNumbers));
+        dashlocations = getDashLocations(data,finalLabelNumbers);
+        croppedChars = cropChars(labeledobjects,binaryImage,finalLabelNumbers,data);
+    else
+        dashlocations = [];
+        croppedChars = cell([0,0]);
+    end
 end
 
 function grayImage = preTasks(plate)
@@ -82,7 +87,6 @@ spaces = minimums(2:size) - maximums(1:size-1);
 %while for example [1 4] means A-333-BB
 x = length(sortIndex);
 if x == 0 || x == 1
-    dashlocations = [2; 4];
 else
     dashlocations = sort(sortIndex(1:2));
 end
@@ -100,14 +104,17 @@ for idx = 1:amountLabels
         dimy = data.CartesianBox(2,labelnumber);
         %37x44
         croppedIm = logical(cut(binaryimage,[dimx,dimy],[minx,miny]));
-        resultimage = imresize(croppedIm,[44 37]);
-%         imagesize = size(resized1);
-%         if(rem(imagesize(2),2))
-%             resultimage = padarray(resized1,[0 (37-imagesize(2))/2]);
-%         else
-%             tempimage = padarray(resized1,[0 ceil((37-imagesize(2))/2)]);
-%             resultimage = tempimage(:,1:37);
-%         end
+        if(dimy/dimx > 44/37)
+            imagesize = size(resized1);
+            if(rem(imagesize(2),2))
+                resultimage = padarray(resized1,[0 (37-imagesize(2))/2]);
+            else
+                tempimage = padarray(resized1,[0 ceil((37-imagesize(2))/2)]);
+                resultimage = tempimage(:,1:37);
+            end
+        else
+            resultimage = imresize(croppedIm,[44 37]);
+        end
         charCellArray{idx} = resultimage;
 end
 croppedChars = charCellArray;
