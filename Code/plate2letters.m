@@ -87,6 +87,7 @@ spaces = minimums(2:size) - maximums(1:size-1);
 %while for example [1 4] means A-333-BB
 x = length(sortIndex);
 if x == 0 || x == 1
+    dashlocations = [];
 else
     dashlocations = sort(sortIndex(1:2));
 end
