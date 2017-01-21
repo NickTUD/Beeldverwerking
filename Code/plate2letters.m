@@ -6,7 +6,7 @@ function [croppedChars,dashlocations] = plate2letters(plate)
     objects = removeNoisePostThresholding(binaryImage);
     labeledobjects = label(objects);
     data = measure(objects,[],{'Size','CartesianBox', 'Maximum', 'Minimum'},[],Inf,0,0);
-    if(numel(msr.Size) == 0)
+    if(numel(data.ID) > 0)
         finalLabelNumbers = getCharacterLikeLabels(data,size(plate,1));
         numberobjects1 = dip_image(ismember(double(labeledobjects),finalLabelNumbers));
         dashlocations = getDashLocations(data,finalLabelNumbers);
@@ -98,7 +98,6 @@ amountLabels = numel(labels);
 charCellArray = cell([1,amountLabels]);
 for idx = 1:amountLabels
         labelnumber = labels(idx);
-        singleobjectimage = labeledimage == labelnumber;
         minx = data.Minimum(1,labelnumber);
         miny = data.Minimum(2,labelnumber);
         dimx = data.CartesianBox(1,labelnumber);
@@ -106,6 +105,7 @@ for idx = 1:amountLabels
         %37x44
         croppedIm = logical(cut(binaryimage,[dimx,dimy],[minx,miny]));
         if(dimy/dimx > 44/37)
+            resized1 = imresize(croppedIm,[44 NaN]);
             imagesize = size(resized1);
             if(rem(imagesize(2),2))
                 resultimage = padarray(resized1,[0 (37-imagesize(2))/2]);
