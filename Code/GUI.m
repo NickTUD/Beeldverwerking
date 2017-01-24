@@ -144,57 +144,50 @@ if(handles.vidimported && ~handles.running)
     %Display the first frame from the start.
     set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(1), '/',int2str(vid.NumberOfFrames)));
     
-    ROIs = findImageROIs(frame);
-    for k = 1:size(ROIs, 1)
-        
-        [array,loc] = plate2letters(ROIs.Image{k});
-        [~, y] = size(array);
-        binaryImage = array{1,1};
-
-        string = '';
-        for j = 1:y
-            binaryImage = array{1,j};
-            if sum((loc == j-1)) > 0
-                string = sprintf('%s-', string);
-            end
-            string = sprintf('%s%s', string, getCharacter(binaryImage, handles.characterTable));
-        end
-        
-    %Display the first frame in the table.
-    set(handles.result_table, 'Data', {string, 1, vid.CurrentTime});
-    end
+    % Emtpy table to make vertcat work.
+    set(handles.result_table, 'Data', {});
+    
+    handles.plateCorrectlyRead = 1;
     
     %For all the frames besides the first one
-    for i=2:vid.NumberOfFrames
-        
-        %Get the frame
-        frame = read(vid,i);
-        ROIs = findImageROIs(frame);
-        for k = 1:size(ROIs, 1)
-        
-            [array,loc] = plate2letters(ROIs.Image{k});
-            [~, y] = size(array);
-            string = '';
-            for j = 1:y
-                binaryImage = array{1,j};
-                if sum((loc == j-1)) > 0
-                    string = sprintf('%s-', string);
-                end
-                string = sprintf('%s%s', string, getCharacter(binaryImage, handles.characterTable));
-            end
+    for i=1:vid.NumberOfFrames
+        if (handles.plateCorrectlyRead && (mod(i, 10) == 0)) || (~handles.plateCorrectlyRead && (mod(i, 4) == 0))
             
-            %The current table with all entries.
-            current = get(handles.result_table, 'Data');
-            %Add the new entry to the table.
-            set(handles.result_table, 'Data', vertcat(current, {string, i, vid.CurrentTime}));
+            try
+       
+                %Get the frame
+                frame = read(vid,i);
+                ROIs = findImageROIs(frame);
+                for k = 1:size(ROIs, 1)
+
+                    [array,loc] = plate2letters(ROIs.Image{k});
+                    
+                    [plateString, newLoc] = createPlateString(handles.characterTable, array, loc);
+                    if (verifyPlate(plateString, newLoc))
+                        
+                        %The current table with all entries.
+                        current = get(handles.result_table, 'Data');
+                        %Add the new entry to the table.
+                        set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime}));
+                    
+                        %Correct plate read
+                        handles.plateCorrectlyRead = 1;
+                    else
+                        handles.plateCorrectlyRead = 0;
+                    end
+                end
+
+                %Display it in the main video axes
+                h = get(handles.main_video, 'Children');
+                set(h, 'CData', frame);
+
+                %Display the amount of frames in the GUI
+                set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(i), '/',int2str(vid.NumberOfFrames)));    
+            
+            catch
+                warning('frame %d failed', i);
+            end
         end
-        
-        %Display it in the main video axes
-        h = get(handles.main_video, 'Children');
-        set(h, 'CData', frame);
-        
-        %Display the amount of frames in the GUI
-        set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(i), '/',int2str(vid.NumberOfFrames)));    
     end
 
     %The video is not running anymore after the loop.
@@ -205,8 +198,7 @@ if(handles.vidimported && ~handles.running)
     
     % Compare results
     results = get(handles.result_table, 'Data');
-    resultsTable = {results(:,1), results(:,2), results(:,3)};
-    checkSolution(resultsTable, 'trainingSolutions.mat')
+    checkSolution(results, 'trainingSolutions.mat')
 end
 
 
