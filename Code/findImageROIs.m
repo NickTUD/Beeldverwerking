@@ -53,8 +53,8 @@ end
 function rotatedROIs = rotateROIs(ROIs, props)
     ROICells = cell(size(props, 1), 2);
     for i=1:size(props.BoundingBox,1)
-        ROICells{i,1} = rotateROI(ROIs.Image{1,1}, props.Orientation(i));
-        ROICells{i,2} = rotateROI(ROIs.ImageBw{1,1}, props.Orientation(i));
+        ROICells{i,1} = rotateROI(ROIs.Image{i,1}, props.Orientation(i));
+        ROICells{i,2} = rotateROI(ROIs.ImageBw{i,1}, props.Orientation(i));
     end
     rotatedROIs = cell2table(ROICells, 'VariableNames',{'Image', 'ImageBw'});
 end

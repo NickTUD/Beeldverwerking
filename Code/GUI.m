@@ -146,7 +146,7 @@ if(handles.vidimported && ~handles.running)
     
     % Emtpy table to make vertcat work.
     set(handles.result_table, 'Data', {});
-    
+
     handles.plateCorrectlyRead = 0;
     
     %For all the frames besides the first one
@@ -168,8 +168,8 @@ if(handles.vidimported && ~handles.running)
                         %The current table with all entries.
                         current = get(handles.result_table, 'Data');
                         %Add the new entry to the table.
-                        set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime}));
-                    
+                        set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
+                        
                         %Correct plate read
                         handles.plateCorrectlyRead = 1;
                     else
