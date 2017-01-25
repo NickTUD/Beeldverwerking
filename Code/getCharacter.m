@@ -1,6 +1,6 @@
 function [character] = getCharacter(binaryImage, characterTable)
     count = zeros(1,29);
-    parfor i = 1:29
+    for i = 1:29
         image = binaryImage & characterTable.CharacterTemplate{i};
         count(i) = sum(sum(image)) / sum(sum(characterTable.CharacterTemplate{i})); 
     end

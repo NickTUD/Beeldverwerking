@@ -15,7 +15,10 @@ function [ verified ] = verifyPlate( plateString, loc )
             end
         end
     end
-    if strcmp(samplePlate, 'XX-99-XX') || strcmp(samplePlate, 'XX-XX-99') || strcmp(samplePlate, '99-XX-XX') || strcmp(samplePlate, '99-XXX-9') || strcmp(samplePlate, '9-XXX-99') || strcmp(samplePlate, 'XX-999-X') || strcmp(samplePlate, 'X-999-XX') || strcmp(samplePlate, 'XXX-99-X')
+    if strcmp(samplePlate, 'XX-99-XX') || strcmp(samplePlate, 'XX-XX-99') ||...
+            strcmp(samplePlate, '99-XX-XX') || strcmp(samplePlate, '99-XXX-9') ||...
+            strcmp(samplePlate, '9-XXX-99') || strcmp(samplePlate, 'XX-999-X') ||...
+            strcmp(samplePlate, 'X-999-XX') || strcmp(samplePlate, 'XXX-99-X')
         verified = 1;
     else
         verified = 0;
