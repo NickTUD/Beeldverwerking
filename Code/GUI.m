@@ -147,11 +147,11 @@ if(handles.vidimported && ~handles.running)
     % Emtpy table to make vertcat work.
     set(handles.result_table, 'Data', {});
     
-    handles.plateCorrectlyRead = 1;
+    handles.plateCorrectlyRead = 0;
     
     %For all the frames besides the first one
     for i=1:vid.NumberOfFrames
-        if (handles.plateCorrectlyRead && (mod(i, 10) == 0)) || (~handles.plateCorrectlyRead && (mod(i, 4) == 0))
+        if (handles.plateCorrectlyRead && (mod(i, 6) == 0)) || (~handles.plateCorrectlyRead && (mod(i, 3) == 0))
             
             try
        
@@ -162,8 +162,8 @@ if(handles.vidimported && ~handles.running)
 
                     [array,loc] = plate2letters(ROIs.Image{k});
                     
-                    [plateString, newLoc] = createPlateString(handles.characterTable, array, loc);
-                    if (verifyPlate(plateString, newLoc))
+                    [plateString] = createPlateString(handles.characterTable, array, loc);
+                    if (verifyPlate(plateString, loc) == 1)
                         
                         %The current table with all entries.
                         current = get(handles.result_table, 'Data');
