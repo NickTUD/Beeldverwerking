@@ -90,6 +90,7 @@ if x == 0 || x == 1
     dashlocations = [];
 else
     dashlocations = sort(sortIndex(1:2));
+    dashlocations = dashlocations';
 end
 end
 

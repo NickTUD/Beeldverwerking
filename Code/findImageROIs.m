@@ -15,7 +15,7 @@ function [ ROIs ] = findImageROIs(rgbImage)
 end
 
 function rprops = findRegionProps(rgbImage)
-    [bwMask, ~] = createMask(rgbImage);
+    bwMask = createMask(rgbImage);
     rprops = regionprops('table', bwMask, 'BoundingBox', 'MajorAxisLength',...
         'MinorAxisLength', 'Orientation', 'FilledImage', 'Extrema', 'Solidity');
 end
@@ -43,7 +43,8 @@ end
 
 function rotatedRgbImage = rotateROI(image, theta)
     transformMatrixRotate = [ cosd(theta) sind(theta)   0;...
-                             -sind(theta) cosd(theta)   0;...
+                              0           cosd(theta)   0;...
+%                             -sind(theta) cosd(theta)   0;...
                               0           0             1];
     tform = affine2d(transformMatrixRotate);
     rotatedRgbImage = imwarp(image, tform);
