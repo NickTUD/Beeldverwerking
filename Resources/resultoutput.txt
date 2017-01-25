@@ -1,0 +1,79 @@
+       License plate     Result
+   1.       5-KKL-63         TP
+   2.       PX-FD-96         TP
+   3.       07-HT-XD         TP
+   4.       88-SLV-9         TP
+   5.       4-TSX-79         TP
+   6.       47-RS-HJ         TP
+   7.       94-RV-BL         FP
+   8.       8-VXZ-62      TP+FP
+   9.       88-BB-TS      TP+FP
+  10.       87-VB-TR      TP+FP
+  11.       XL-LH-20         TP
+  12.       91-SZ-GH         TP
+  13.       60-LX-XP      TP+FP
+  14.       20-DL-PN         FN
+  15.       06-KDT-6         FN
+  16.       10-PPD-2         TP
+  17.       99-TH-PZ         TP
+  18.       87-SK-TJ         TP
+  19.       58-NFH-5      TP+FP
+  20.       73-SV-NF         TP
+  21.       49-HT-RK         FP
+  22.       3-KGD-65         TP
+  23.       TF-TB-20         FN
+  24.       28-NHH-7      TP+FP
+  25.       04-HH-DP         TP
+  26.       15-TR-NV      TP+FP
+  27.       10-PFJ-8         TP
+  28.       RN-HH-98      TP+FP
+  29.       58-TG-NK      TP+FP
+  30.       BS-DJ-49         TP
+  31.       41-JS-SB      TP+FP
+  32.       46-LS-KV         TP
+  33.       46-LJG-1         TP
+  34.       HL-FP-34      TP+FP
+  35.       51-LR-BN      TP+FP
+  36.       19-DG-SF         TP
+  37.       16-PTG-8         FP
+  38.       15-TP-SH         TP
+  39.       RZ-ZN-62         FN
+  40.       61-XXZ-9         TP
+  41.       79-NK-JK         FN
+  42.       59-KTJ-5         FN
+  43.       96-ZND-7         FP
+  44.       18-VL-PK         FP
+  45.       SV-FZ-63         FN
+  46.       23-JJ-JJ         FN
+  47.       08-JKJ-2      TP+FP
+  48.       39-TF-DR         FP
+  49.       RF-GD-58         FN
+  50.       38-NZ-JT         FN
+  51.       EH3201BP         FN
+  52.        B102AMT         FN
+  53.       RECM2111         FN
+  54.        096-BZN         FN
+  55.          VFD88         FN
+  56.        DP989CC         FN
+  57.        AXT3147         FN
+  58.        EN143WH         FN
+  59.        I7859AM         FN
+  60.       TI149339         FN
+
+---------------------------------------------------------
+
+RESULTS:
+                         Category I     Category II    Category III   Category IV   
+   True positives (TP)   25 ( 83.33%)    8 ( 80.00%)    1 ( 10.00%)    0 (  0.00%)
+  False positives (FP)   11              4              4              0 
+  False negatives (FN)    3 ( 10.00%)    1 ( 10.00%)    6 ( 60.00%)   10 (100.00%)
+                         ---------------------------------------------------------
+                 Score    0.64           0.62           0.09           0.00
+
+FINAL RESULT:
+                         Category I+II  Total         
+   True positives (TP)   33 ( 63.46%)   34 ( 56.67%)
+  False positives (FP)   15             19 
+  False negatives (FN)    4 (  7.69%)   20 ( 33.33%)
+                         ---------------------------
+                 Score    0.63           0.47
