@@ -154,7 +154,7 @@ if(handles.vidimported && ~handles.running)
     
     %For all the frames besides the first one
     for i=1:vid.NumberOfFrames
-        if (handles.plateCorrectlyRead && (mod(i, 8) == 0)) || (~handles.plateCorrectlyRead && (mod(i, 4) == 0))
+        if (handles.plateCorrectlyRead && (mod(i, 4) == 0)) || (~handles.plateCorrectlyRead && (mod(i, 4) == 0))
             
             try
        
@@ -179,11 +179,10 @@ if(handles.vidimported && ~handles.running)
                             diff1 = sum(plateString ~= prev1String);
                             diff2 = sum(plateString ~= prev2String);
                             diff3 = sum(plateString ~= prev3String);
-                            if diff1 == 0 && diff2 > 0 && diff2 < 2 && diff3 > 2
+                            if diff1 == 0 && diff2 > 0 && diff2 < 3 && diff3 > 2
                                 current{rows(1) - 1, :} = [];
                                 set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
                             elseif diff1 > 2 || diff1 == 0
-                                %Add the new entry to the table.
                                 set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
                             end
                         else 
