@@ -1,4 +1,4 @@
-function [ string ] = createPlateString( characterTable, array, loc )
+function [ string ] = createPlateString( characterTable, array, loc, propTable)
     [~, y] = size(array);
     string = '';
     for j = 1:y
@@ -6,7 +6,7 @@ function [ string ] = createPlateString( characterTable, array, loc )
         if sum((loc == j-1)) > 0
             string = sprintf('%s-', string);
         end
-        string = sprintf('%s%s', string, getCharacter(binaryImage, characterTable));
+        string = sprintf('%s%s', string, getCharacter(binaryImage, characterTable, propTable));
     end
 end
 

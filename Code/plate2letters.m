@@ -8,7 +8,7 @@ function [croppedChars,dashlocations] = plate2letters(plate)
     data = measure(objects,[],{'Size','CartesianBox', 'Maximum', 'Minimum'},[],Inf,0,0);
     if(numel(data.ID) > 0)
         finalLabelNumbers = getCharacterLikeLabels(data,size(plate,1));
-        numberobjects1 = dip_image(ismember(double(labeledobjects),finalLabelNumbers));
+%         numberobjects1 = dip_image(ismember(double(labeledobjects),finalLabelNumbers));
         dashlocations = getDashLocations(data,finalLabelNumbers);
         croppedChars = cropChars(labeledobjects,binaryImage,finalLabelNumbers,data);
     else
@@ -33,7 +33,7 @@ end
 
 function thresholdedImage = thresholding(plate_gray)
 %Threshold using isodata algorithm
-[out,~] = threshold(plate_gray,'Isodata',Inf);
+[out,~] = threshold(plate_gray,'isodata',Inf);
 %Invert image to make letters foreground
 thresholdedImage = ~out;
 end
