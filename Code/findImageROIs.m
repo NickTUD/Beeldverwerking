@@ -12,12 +12,19 @@ function [ ROIs ] = findImageROIs(rgbImage)
     
     % tighten bounding boxes
     ROIs = tightenROIs(ROIs, props);
+    
+    for i=1:size(ROIs)
+        if (size(ROIs.Image{1}, 2) < 200)
+            ROIs.Image{1} = imresize(ROIs.Image{1}, [NaN 200]);
+            ROIs.ImageBw{1} = imresize(ROIs.ImageBw{1}, [NaN 200]);
+        end
+    end
 end
 
 function rprops = findRegionProps(rgbImage)
     bwMask = createMask(rgbImage);
     rprops = regionprops('table', bwMask, 'BoundingBox', 'MajorAxisLength',...
-        'MinorAxisLength', 'Orientation', 'FilledImage', 'Extrema', 'Solidity');
+        'MinorAxisLength', 'Orientation', 'FilledImage', 'Solidity');
 end
 
 function regionProps = filterRegionProps(props)
@@ -44,7 +51,6 @@ end
 function rotatedRgbImage = rotateROI(image, theta)
     transformMatrixRotate = [ cosd(theta) sind(theta)   0;...
                               0           cosd(theta)   0;...
-%                             -sind(theta) cosd(theta)   0;...
                               0           0             1];
     tform = affine2d(transformMatrixRotate);
     rotatedRgbImage = imwarp(image, tform);

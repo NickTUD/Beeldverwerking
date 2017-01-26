@@ -152,9 +152,11 @@ if(handles.vidimported && ~handles.running)
 
     handles.plateCorrectlyRead = 0;
     
+    tic;
+    
     %For all the frames besides the first one
     for i=1:vid.NumberOfFrames
-        if (handles.plateCorrectlyRead && (mod(i, 8) == 0)) || (~handles.plateCorrectlyRead && (mod(i, 4) == 0))
+        if ((mod(i, 4) == 0))
             
             try
        
@@ -170,7 +172,7 @@ if(handles.vidimported && ~handles.running)
                         
                         %The current table with all entries.
                         current = get(handles.result_table, 'Data');
-                        if i > 32
+                        if i > 12
                             rows = size(current);
                             prev3String = current{rows(1) - 2, 1};
                             prev2String = current{rows(1) - 1, 1};
@@ -184,8 +186,9 @@ if(handles.vidimported && ~handles.running)
                                 set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
                             elseif diff1 > 2 || diff1 == 0
                                 %Add the new entry to the table.
-                                set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
+                                set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime}));
                             end
+ 
                         else 
                             set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
                         end
@@ -218,6 +221,8 @@ if(handles.vidimported && ~handles.running)
     % Compare results
     results = get(handles.result_table, 'Data');
     checkSolution(results, 'trainingSolutions.mat')
+    
+    toc
 end
 
 
