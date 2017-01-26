@@ -27,13 +27,13 @@ plate_graydip = dip_image(plate_grayscale);
 %Histogram stretch to increase contrast
 unsharpGrayImage = stretch(plate_graydip,0,100,0,255);
 %Sharpen image using gaussian filter
-grayImage = 2*unsharpGrayImage - gaussf(unsharpGrayImage,100);
+grayImage = 2*unsharpGrayImage - gaussf(unsharpGrayImage,10);
 
 end
 
 function thresholdedImage = thresholding(plate_gray)
 %Threshold using isodata algorithm
-[out,~] = threshold(plate_gray,'isodata',Inf);
+[out,~] = threshold(plate_gray,'Isodata',Inf);
 %Invert image to make letters foreground
 thresholdedImage = ~out;
 end
