@@ -169,7 +169,6 @@ if(handles.vidimported && ~handles.running)
                         current = get(handles.result_table, 'Data');
                         if i > 32
                             rows = size(current);
-                            prev4String = current{rows(1) - 3, 1};
                             prev3String = current{rows(1) - 2, 1};
                             prev2String = current{rows(1) - 1, 1};
                             prev1String = current{rows(1), 1};
@@ -177,8 +176,10 @@ if(handles.vidimported && ~handles.running)
                             diff1 = sum(plateString ~= prev1String);
                             diff2 = sum(plateString ~= prev2String);
                             diff3 = sum(plateString ~= prev3String);
-                            diff4 = sum(plateString ~= prev4String);
-                            if diff1 > 2 || diff1 == 0 || diff2 == 0 || diff3 == 0 || diff4 == 0
+                            if diff1 == 0 && diff2 > 0 && diff2 < 2 && diff3 > 2
+                                current{rows(1) - 1, :} = [];
+                                set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
+                            elseif diff1 > 2 || diff1 == 0
                                 %Add the new entry to the table.
                                 set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
                             end
