@@ -151,7 +151,7 @@ if(handles.vidimported && ~handles.running)
     
     %For all the frames besides the first one
     for i=1:vid.NumberOfFrames
-        if (handles.plateCorrectlyRead && (mod(i, 6) == 0)) || (~handles.plateCorrectlyRead && (mod(i, 3) == 0))
+        if (handles.plateCorrectlyRead && (mod(i, 8) == 0)) || (~handles.plateCorrectlyRead && (mod(i, 4) == 0))
             
             try
        
@@ -167,9 +167,24 @@ if(handles.vidimported && ~handles.running)
                         
                         %The current table with all entries.
                         current = get(handles.result_table, 'Data');
-                        %Add the new entry to the table.
-                        set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
-                        
+                        if i > 32
+                            rows = size(current);
+                            prev4String = current{rows(1) - 3, 1};
+                            prev3String = current{rows(1) - 2, 1};
+                            prev2String = current{rows(1) - 1, 1};
+                            prev1String = current{rows(1), 1};
+                            
+                            diff1 = sum(plateString ~= prev1String);
+                            diff2 = sum(plateString ~= prev2String);
+                            diff3 = sum(plateString ~= prev3String);
+                            diff4 = sum(plateString ~= prev4String);
+                            if diff1 > 2 || diff1 == 0 || diff2 == 0 || diff3 == 0 || diff4 == 0
+                                %Add the new entry to the table.
+                                set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
+                            end
+                        else 
+                            set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
+                        end
                         %Correct plate read
                         handles.plateCorrectlyRead = 1;
                     else
@@ -185,7 +200,7 @@ if(handles.vidimported && ~handles.running)
                 set(handles.frame_text, 'String', strcat('Frame',{' '}, int2str(i), '/',int2str(vid.NumberOfFrames)));    
             
             catch
-                warning('frame %d failed', i);
+               warning('frame %d failed', i);
             end
         end
     end
