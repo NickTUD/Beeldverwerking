@@ -68,6 +68,9 @@ handles.frameselected = 0;
 structCharacterTable = load('characterTable.mat');
 handles.characterTable = structCharacterTable.characterTable;
 
+structPropTable = load('propTable.mat');
+handles.propTable = structPropTable.propTable;
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -151,7 +154,7 @@ if(handles.vidimported && ~handles.running)
     
     %For all the frames besides the first one
     for i=1:vid.NumberOfFrames
-        if (handles.plateCorrectlyRead && (mod(i, 6) == 0)) || (~handles.plateCorrectlyRead && (mod(i, 3) == 0))
+        if (handles.plateCorrectlyRead && (mod(i, 8) == 0)) || (~handles.plateCorrectlyRead && (mod(i, 4) == 0))
             
             try
        
@@ -162,7 +165,7 @@ if(handles.vidimported && ~handles.running)
 
                     [array,loc] = plate2letters(ROIs.Image{k});
                     
-                    [plateString] = createPlateString(handles.characterTable, array, loc);
+                    [plateString] = createPlateString(handles.characterTable, array, loc, handles.propTable);
                     if (verifyPlate(plateString, loc) == 1)
                         
                         %The current table with all entries.
