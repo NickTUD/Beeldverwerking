@@ -170,25 +170,25 @@ if(handles.vidimported && ~handles.running)
                         
                         %The current table with all entries.
                         current = get(handles.result_table, 'Data');
-                        if i > 12
-                            rows = size(current);
-                            prev3String = current{rows(1) - 2, 1};
-                            prev2String = current{rows(1) - 1, 1};
-                            prev1String = current{rows(1), 1};
+                        %if i > 12
+                        %    rows = size(current);
+                        %    prev3String = current{rows(1) - 2, 1};
+                        %    prev2String = current{rows(1) - 1, 1};
+                        %    prev1String = current{rows(1), 1};
                             
-                            diff1 = sum(plateString ~= prev1String);
-                            diff2 = sum(plateString ~= prev2String);
-                            diff3 = sum(plateString ~= prev3String);
-                            if diff1 == 0 && diff2 > 0 && diff2 < 3 && diff3 > 2
-                                current{rows(1) - 1, :} = [];
-                                set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
-                            elseif diff1 > 2 || diff1 == 0
-                                set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
-                            end
+                        %    diff1 = sum(plateString ~= prev1String);
+                        %    diff2 = sum(plateString ~= prev2String);
+                        %    diff3 = sum(plateString ~= prev3String);
+                            %if diff1 == 0 && diff2 > 0 && diff2 < 3 && diff3 > 2
+                            %    current{rows(1) - 1, :} = [];
+                            %    set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
+                            %elseif diff1 > 2 || diff1 == 0
+                            %    set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
+                            %end
  
-                        else 
+                        %else 
                             set(handles.result_table, 'Data', vertcat(current, {plateString, i, vid.CurrentTime})); 
-                        end
+                        %end
                         %Correct plate read
                         handles.plateCorrectlyRead = 1;
                     else
@@ -217,7 +217,7 @@ if(handles.vidimported && ~handles.running)
     
     % Compare results
     results = get(handles.result_table, 'Data');
-    checkSolution(results, 'trainingSolutions.mat')
+    checkSolution(results, 'beoordelingsSolutions.mat')
     
     toc
 end
